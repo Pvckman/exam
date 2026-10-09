@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ethical Hacking Essentials Test Reviewer</title>
+<style>
+:root{
+  --bg1:#eef3fb; --bg2:#f8f1fb; --card:#ffffff; --text:#1c2333; --muted:#5d6785;
+  --border:#d9e0f0; --accent:#4f6ef7; --accent2:#8b5cf6; --accent-soft:#e7ecff;
+  --good:#16a34a; --good-bg:#e3f7ea; --bad:#dc2626; --bad-bg:#fde8e8;
+  --shadow:0 10px 30px rgba(60,80,140,.12); --expl:#f3f6ff;
+}
+[data-theme="dark"]{
+  --bg1:#0d1220; --bg2:#1a1030; --card:#161d31; --text:#e8ecf8; --muted:#9aa6c7;
+  --border:#2a3556; --accent:#7c93ff; --accent2:#a78bfa; --accent-soft:#222c4d;
+  --good:#4ade80; --good-bg:#12311f; --bad:#f87171; --bad-bg:#3a1618;
+  --shadow:0 10px 30px rgba(0,0,0,.45); --expl:#1b2442;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  color:var(--text);
+  background:linear-gradient(135deg,var(--bg1),var(--bg2)) fixed;
+  min-height:100vh; line-height:1.55; transition:background .3s,color .3s;
+}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 60px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+h1{font-size:clamp(1.15rem,3.5vw,1.6rem);margin:0;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:.85rem;margin-top:2px}
+.btn{
+  border:1px solid var(--border);background:var(--card);color:var(--text);
+  padding:9px 14px;border-radius:12px;cursor:pointer;font-size:.9rem;font-weight:600;
+  transition:transform .12s,box-shadow .12s,background .2s;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:18px}
+.score{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center}
+.stat b{display:block;font-size:1.5rem}
+.stat span{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.stat.good b{color:var(--good)} .stat.bad b{color:var(--bad)}
+.bar{height:8px;background:var(--accent-soft);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.seg{display:flex;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--card)}
+.seg button{border:0;background:transparent;color:var(--muted);padding:9px 12px;font-weight:600;cursor:pointer;font-size:.85rem}
+.seg button.on{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent);margin-bottom:10px}
+.q{font-size:clamp(1rem,2.6vw,1.12rem);font-weight:600;margin:0 0 14px}
+.opts{display:grid;gap:10px}
+.opt{
+  display:flex;align-items:center;gap:12px;text-align:left;width:100%;
+  border:2px solid var(--border);background:var(--card);color:var(--text);
+  padding:12px 14px;border-radius:14px;cursor:pointer;font-size:.98rem;
+  transition:border-color .15s,background .15s,transform .1s;
+}
+.opt:hover:not(:disabled){border-color:var(--accent);transform:translateX(2px)}
+.letter{flex:0 0 30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.85rem;background:var(--accent-soft);color:var(--accent)}
+.otext{flex:1;min-width:0;overflow-wrap:anywhere}
+.mark{flex:0 0 auto;font-size:1.25rem;font-weight:800;display:none}
+.opt.correct{border-color:var(--good);background:var(--good-bg)}
+.opt.correct .letter{background:var(--good);color:#fff}
+.opt.correct .mark{display:block;color:var(--good)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.opt.wrong .letter{background:var(--bad);color:#fff}
+.opt.wrong .mark{display:block;color:var(--bad)}
+.expl{display:none;margin-top:14px;background:var(--expl);border-left:4px solid var(--accent);border-radius:12px;padding:12px 14px;font-size:.93rem}
+.expl.show{display:block;animation:fade .25s}
+.expl.ok{border-left-color:var(--good)} .expl.no{border-left-color:var(--bad)}
+.verdict{font-weight:800;margin-bottom:4px}
+.expl.ok .verdict{color:var(--good)} .expl.no .verdict{color:var(--bad)}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px}
+details{margin-top:16px}
+summary{cursor:pointer;font-weight:700;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:6px;margin-top:10px}
+.grid button{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:8px;padding:7px 0;cursor:pointer;font-size:.8rem;font-weight:600}
+.grid button.cur{outline:2px solid var(--accent)}
+.grid button.g{background:var(--good-bg);border-color:var(--good);color:var(--good)}
+.grid button.r{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.result{text-align:center;padding:10px 0}
+.big{font-size:3rem;font-weight:800;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hidden{display:none}
+@media(max-width:520px){
+  .score{grid-template-columns:repeat(2,1fr)}
+  .nav .btn{flex:1}
+  .opt{padding:11px 10px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Ethical Hacking Essentials Test Reviewer</h1>
+      <div class="sub">EC-Council · Part I (75 original) + Part II (100 new) = 175 questions</div>
+    </div>
+    <button class="btn" id="themeBtn" aria-label="Toggle light and dark mode">🌙 Dark</button>
+  </header>
+
+  <div class="score" aria-live="polite">
+    <div class="stat good"><b id="sCorrect">0</b><span>Correct</span></div>
+    <div class="stat bad"><b id="sWrong">0</b><span>Wrong</span></div>
+    <div class="stat"><b id="sAnswered">0</b><span>Answered</span></div>
+    <div class="stat"><b id="sPct">0%</b><span>Score</span></div>
+  </div>
+  <div class="bar"><i id="barFill"></i></div>
+
+  <div class="controls">
+    <div class="seg" id="modeSeg">
+      <button data-m="all" class="on">All (175)</button>
+      <button data-m="1">Part I (75)</button>
+      <button data-m="2">Part II (100)</button>
+    </div>
+    <button class="btn" id="shuffleBtn">🔀 Shuffle: Off</button>
+    <button class="btn" id="resetBtn">↺ Restart</button>
+  </div>
+
+  <div class="card" id="quizCard">
+    <span class="tag" id="qTag"></span>
+    <p class="q" id="qText"></p>
+    <div class="opts" id="opts"></div>
+    <div class="expl" id="expl"></div>
+    <div class="nav">
+      <button class="btn" id="prevBtn">← Previous</button>
+      <button class="btn primary" id="nextBtn">Next →</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="resultCard">
+    <div class="result">
+      <div class="big" id="rPct"></div>
+      <h2 id="rLine"></h2>
+      <p id="rDetail" class="sub"></p>
+      <button class="btn primary" id="retryBtn">Try again</button>
+      <button class="btn" id="reviewBtn">Review questions</button>
+    </div>
+  </div>
+
+  <details>
+    <summary>Question navigator</summary>
+    <div class="grid" id="grid"></div>
+  </details>
+</div>
+
+<script>
+const Q = (p, n, q, c, a, e) => ({ p, n, q, c, a, e });
+const QUESTIONS = [
+/* ================= PART I - ORIGINAL ITEMS ================= */
+Q(1,1,"Steve, a professional pen tester, was hired by an organization to assess its cybersecurity. The organization provided Steve with details such as network topology documents, asset inventory, and valuation information. This information helped Steve complete the penetration test successfully, and he provided a snapshot of the organization's current security posture.",["Grey-box testing","Black-box testing","White-box testing","Goal-oriented penetration testing"],2,"White-box testing provides the tester with extensive internal knowledge such as network topology, assets, and system details."),
+Q(1,2,"Which of the following countermeasures helps an administrator defend the network against sniffing attacks?",["Use static IP addresses and ARP tables","Use IPv4 instead of IPv6","Use a hub instead of a switch","Turn on network identification broadcasts"],0,"Static ARP entries help reduce ARP spoofing or poisoning, a common technique used to facilitate sniffing."),
+Q(1,3,"Which of the following communication standards is also known as WiMAX and is designed to provide multiple physical layer (PHY) and MAC options?",["802.15.1","802.16","802.11g","802.11n"],1,"IEEE 802.16 is the family of standards associated with WiMAX."),
+Q(1,4,"Jane, a third-party security auditor, received a mail from one of her client organizations seeking advice on securing corporate data. Jane suggested a cloud deployment model that provides complete control over corporate data and can be managed within the organization.",["Private cloud","Multi cloud","Public cloud","Community cloud"],0,"A private cloud is dedicated to one organization and can be managed internally, providing greater control over data and infrastructure."),
+Q(1,5,"Clark is an unskilled hacker attempting to perform an attack on a target organization to gain popularity. He downloaded and used freely available hacking tools and software developed by other professional hackers for this purpose.",["Hacktivist","Cyber terrorist","Script kiddie","Industrial spy"],2,"A script kiddie is an inexperienced attacker who relies on tools or scripts created by others."),
+Q(1,6,"Christian is working as a software developer in a reputed MNC. He received a message from XIM bank that claims to be urgent and requests to call a phone number mentioned in the message. Worried by this, he called the number to check on his account, believing it to be an authentic XIM Bank customer service phone number. A recorded message asks him to provide his credit or debit card number, as well as his password.",["Eavesdropping","SMiShing","Phishing","Spam mail"],1,"SMiShing is phishing conducted through SMS or text messages, often directing victims to a malicious link or phone number."),
+Q(1,7,"James is a professional hacker who managed to penetrate the target company's network and tamper with software by adding a malicious script in the production that holds persistence on the network.",["Gaining access","Scanning","Maintaining access","Clearing tracks"],2,"Establishing persistence after compromise belongs to the maintaining-access phase."),
+Q(1,8,"Which of the following practices makes web applications vulnerable to SQL injection attacks?",["Accept entries that contain binary data, escape sequences, and comment characters","Use the most restrictive SQL account types for applications","Never build Transact-SQL statements directly from user input","Avoid constructing dynamic SQL with concatenated input values"],0,"Allowing unvalidated input containing SQL metacharacters and comments can enable injection."),
+Q(1,9,"John, a professional penetration tester, was hired by an organization for conducting a penetration test on their IT infrastructure. He was assigned the task of identifying risks, rather than finding vulnerabilities. In this process, he defined the goal before initiating the penetration test and performed multiple parallel processes to achieve the goal.",["Red-team-oriented penetration testing approach","Compliance-oriented penetration testing approach","Adversarial goal-based assessment","Objective-oriented penetration testing approach"],2,"This assessment starts with an adversarial goal and focuses on the risks created by achieving that goal rather than merely listing vulnerabilities."),
+Q(1,10,"James, a professional hacker, decided to target an organization's network. He identified a vulnerable protocol that serves on port 23, which allowed him to communicate with a remote host through a command-line interface.",["SNMP","HTTP","Telnet","FTP"],2,"Telnet traditionally uses TCP port 23 and provides remote command-line access."),
+Q(1,11,"Kalley, a shopping freak, often visits different e-commerce websites from her office system. One day, she received a free software on her mail with the claim that it is loaded with new clothing offers. Tempted by this, Kalley downloaded the malicious software onto her system. The software infected Kalley's system and began spreading the infection to other systems connected to the network.",["Decoy application","Portable hardware media","Insecure patch management","File sharing services"],0,"The malicious program was disguised as useful software, making it a decoy application."),
+Q(1,12,"Sam is a hacker who decided to damage the reputation of an organization. He started collecting information about the organization using social engineering techniques. Sam aims to gather critical information such as admin passwords and OS versions to plan for an attack.",["Helpdesk","Customer support team","System administrators","Third-party service provider"],2,"System administrators are most likely to know operating-system details and privileged administrative information."),
+Q(1,13,"Dan, a professional hacker, was launching attacks on government and private organizations to gain remote access, destroy data, and steal confidential information, without concern for jail terms or any other kind of punishment.",["Script kiddies","Suicide hackers","White hats","Insiders"],1,"Suicide hackers carry out destructive attacks with little or no concern about being identified or punished."),
+Q(1,14,"CyberSol Inc., an MNC, decided to employ cloud services for their development environment. They consulted a cloud provider and requested development tools, configuration management, and deployment platforms for developing custom applications.",["Security-as-a-service (SECaaS)","Infrastructure-as-a-service (IaaS)","Platform-as-a-service (PaaS)","Identity-as-a-service (IDaaS)"],2,"PaaS provides application-development tools, runtime environments, configuration support, and deployment platforms."),
+Q(1,15,"Brian, a professional hacker, targeted a web server and attempted to obtain administrative privileges to access it. In this process, he used a predefined file containing various combinations of words along with an automated program to check if any of them match the original credentials.",["Directory traversal attack","Cache poisoning","Dictionary attack","DNS amplification"],2,"A dictionary attack tries candidate passwords from a predefined word list."),
+Q(1,16,"Identify the algorithm used in the WPA2 protocol for encrypting messages in wireless communication?",["RSA","AES-GCMP 256","RC4-TKIP","AES-CCMP"],3,"WPA2 commonly uses AES with CCMP for confidentiality and integrity."),
+Q(1,17,"In which of the following testing approaches does a penetration tester perform security assessments against security standards, frameworks, laws, and acts?",["Objective-oriented penetration testing approach","Compliance-oriented penetration testing approach","Red-team-oriented penetration testing approach","Adversarial goal-based assessment"],1,"Compliance-oriented testing evaluates controls against standards, frameworks, regulations, and laws."),
+Q(1,18,"Which of the following attacks does an attacker inject an additional malicious query into an original query to make a DBMS execute multiple SQL queries?",["Piggybacked query","Illegal/logically incorrect query","Tautology","System stored procedure"],0,"A piggybacked-query attack appends an additional SQL statement to the original query so multiple statements execute."),
+Q(1,19,"Which of the following cloud computing threats arises from authentication vulnerabilities, user-provisioning and de-provisioning vulnerabilities, hypervisor vulnerabilities, unclear roles and responsibilities, and misconfigurations?",["Isolation failure","Supply-chain failure","Subpoena and e-discovery","Privilege escalation"],3,"These weaknesses can allow a user or attacker to obtain privileges beyond those intended."),
+Q(1,20,"Which of the following factors makes a system or network vulnerable to password cracking attacks?",["Encrypting credentials before saving to the disk","Using words that are not available in the dictionary","Storing credentials without adding random strings","Changing credentials provided by the vendor"],2,"Without random salts, password hashes are more vulnerable to precomputed cracking techniques such as rainbow tables."),
+Q(1,21,"Robert, a security specialist, was appointed to strengthen the security of the organization's network. To prevent multiple login attempts from unknown sources, Robert implemented a security strategy of issuing alerts or warning messages when multiple failed login attempts are made.",["Small session-ID generation","Weak session-ID generation","Absence of account lockout for invalid session IDs","Indefinite session timeout"],2,"Lockout or alert mechanisms reduce repeated unauthorized login attempts and brute-force activity."),
+Q(1,22,"Below are various phases involved in the hacking lifecycle: 1) Scanning 2) Reconnaissance 3) Clearing tracks 4) Maintaining access 5) Gaining access. Identify the correct sequence of phases involved in the hacking process.",["2-->5-->4-->3-->1","1-->3-->5-->4-->2","2-->1-->5-->4-->3","1-->3-->2-->4-->5"],2,"The common sequence is reconnaissance, scanning, gaining access, maintaining access, and clearing tracks."),
+Q(1,23,"Bruce, a professional hacker, targeted an OT network. He initiated a looping strategy to recover the password of the target system. He started sending one character at a time to check whether the first character entered is correct; if so, he continued the loop for consecutive characters. Using this technique, Bruce identified how much time the device takes to finish one complete password authentication process, through which he determined the correct characters in the target password.",["Side-channel attack","Reconnaissance attack","Buffer overflow attack","Code injection attack"],0,"The attacker infers secret information from timing behavior, making this a timing side-channel attack."),
+Q(1,24,"Which of the following layers of the IoT architecture is responsible for delivering services to respective users from different sectors such as building, industrial, manufacturing, automobile, security, and healthcare?",["Application layer","Middleware layer","Access gateway layer","Edge technology layer"],0,"The application layer delivers user-facing IoT services for domains such as healthcare, manufacturing, and smart buildings."),
+Q(1,25,"Martin, a hacker, aimed to crash a target system. For this purpose, he spoofed the source IP address with the target's IP address and sent many ICMP ECHO request packets to an IP broadcast network, causing all the hosts to respond to the received ICMP ECHO requests and ultimately crashing the target machine.",["Multi-vector attack","Fragmentation attack","Smurf attack","UDP flood attack"],2,"A Smurf attack uses spoofed ICMP Echo Requests sent to a broadcast address to amplify traffic toward the victim."),
+Q(1,26,"Which of the following categories of mobile risk covers binary patching, local resource modification, method hooking, method swizzling, and dynamic memory modification?",["Extraneous functionality","Client code quality","Code tampering","Reverse engineering"],2,"These techniques alter application code, resources, methods, or runtime behavior."),
+Q(1,27,"Roxanne is a professional hacker hired by an agency to disrupt the business services of their rival company. Roxanne employed a special type of malware that consumes a server's memory and network bandwidth when triggered. Consequently, the target server is overloaded and stops responding.",["Armored virus","Spyware","Rootkit","Worm"],3,"Worms can self-replicate and consume processing, memory, and bandwidth, potentially causing service disruption."),
+Q(1,28,"Which of the following devices does an attacker use to overload traffic to prevent authorized users from accessing a wireless network and block the communication in a certain radius?",["Routing device","Jamming device","Amplifying device","Repeater"],1,"A jamming device generates radio interference that disrupts wireless communication within an affected area."),
+Q(1,29,"Peter, an attacker aiming to disrupt organizational services, targeted a configuration protocol that issues IP addresses to host systems. To disrupt the issuance of IP addresses, Peter flooded the target server with spoofed MAC addresses so that valid users cannot receive IP addresses to access the network.",["Session hijacking","DHCP starvation attack","ARP spoofing","Ping-of-death attack"],1,"DHCP starvation exhausts the available DHCP address pool using many spoofed client requests."),
+Q(1,30,"William is an attacker who is attempting to hack Bluetooth-enabled devices at public places. Within the target's range, he used special software to obtain the data stored in the victim's device. He used a technique that exploits the vulnerability in the OBject EXchange (OBEX) protocol that Bluetooth uses to exchange information.",["Bluejacking","Bluesmacking","Bluesnarfing","Bluebugging"],2,"Bluesnarfing exploits Bluetooth services such as OBEX to access data on a nearby device without authorization."),
+Q(1,31,"Which of the following Trojans can an attacker use for the auto-deletion of files, folders, and registry entries as well as local network drives to cause the operating system to fail?",["e-Banking Trojan","Backdoor Trojan","Defacement Trojan","Destructive Trojan"],3,"A destructive Trojan is designed to delete or corrupt files and system data, potentially rendering the operating system unusable."),
+Q(1,32,"Melanie, a professional hacker, is attempting to break into a target network through an application server. In this process, she identified a logic flaw in the target web application that provided visibility into the source code. She exploited this vulnerability to launch further attacks on the target web application.",["Insecure deserialization","Broken authentication","Command injection","Security misconfiguration"],3,"Misconfigured servers or applications can expose source code, debugging information, directory listings, or sensitive files."),
+Q(1,33,"Below are the various phases involved in the vulnerability-management lifecycle: 1) Vulnerability scan 2) Verification 3) Identify assets and create a baseline 4) Risk assessment 5) Monitor 6) Remediation. Identify the correct order of phases involved in the vulnerability-management lifecycle.",["1-->2-->3-->4-->5-->6","3-->2-->4-->5-->6-->1","3-->1-->4-->6-->2-->5","4-->6-->1-->2-->3-->5"],2,"A typical lifecycle is asset identification and baselining, scanning, risk assessment, remediation, verification, and continuous monitoring."),
+Q(1,34,"Which of the following web-server components facilitates storage on another machine or disk if the original disk becomes full, in addition to providing object-level security?",["Document root","Web proxy","Server root","Virtual document tree"],3,"A virtual document tree can map web content to alternate storage locations and support object-level access controls."),
+Q(1,35,"In which of the following levels of the OSI model does an attacker gain control over the HTTP user session by obtaining the session IDs and create new unauthorized sessions by using the stolen data?",["Application level","Presentation level","Network level","Transport level"],0,"HTTP and web session management operate at the application layer."),
+Q(1,36,"Kevin, an attacker, is attempting to compromise a cloud server. In this process, Kevin intercepted the SOAP messages transmitted between a user and the server, manipulated the body of the message, and then redirected it to the server as a legitimate user to gain access and run malicious code on the cloud server.",["DNS spoofing","Wrapping attack","Side-channel attack","Cross-guest VM breaches"],1,"SOAP wrapping attacks manipulate message structure so altered content is processed as if it were legitimate."),
+Q(1,37,"Which of the following tiers in the container technology architecture stores images and disseminates images to orchestrators based on requests?",["Tier 2: Testing and accreditation systems","Tier 3: Registries","Tier 1: Developer machines","Tier 4: Orchestrators"],1,"Container registries store images and provide them to orchestrators for deployment."),
+Q(1,38,"Jeff, a professional hacker, is sniffing the messages transferred between Bob and Alice in an attempt to read the information transmitted in the messages.",["Confidentiality","Integrity","Authenticity","Availability"],0,"Unauthorized reading of information compromises confidentiality."),
+Q(1,39,"Paola, a professional hacker, was hired to break into the target organization's network and extract sensitive data. In this process, Paola found that the target organization has purchased new hardware. She accessed the new hardware while it was in transit and tampered with the hardware to make it vulnerable to attacks.",["Active attack","Distribution attack","Insider attack","Passive attack"],1,"A distribution attack compromises hardware or software during manufacturing, shipping, or distribution before it reaches the intended user."),
+Q(1,40,"Mark, an attacker, aims to access an organization's internal server, but the local firewall implementation restricted him from achieving this objective. To overcome this issue, he started sending specially crafted requests to the public server, through which he gained access to the local server.",["HTTP response-splitting attack","SSRF attack","Web cache poisoning attack","SSH brute-force attack"],1,"Server-Side Request Forgery tricks a server into making requests to internal resources that the attacker cannot reach directly."),
+Q(1,41,"An organization recruited Jack, a security professional, to monitor and protect their web application from cyber-attacks. In this process, Jack implemented multi-factor authentication and ensured that all the web application credentials are stored in the form of hashes.",["Cross-site scripting","XML external entity","Broken authentication","Command injection"],2,"MFA and secure password hashing are controls used to reduce authentication-related weaknesses."),
+Q(1,42,"Jack, an attacker, is attempting to break into the target company's premises. He pretended to have lost his ID card while on the way to the office and tricked a legitimate employee into providing their ID card to check into the premises.",["Shoulder surfing","Piggybacking","Phishing","Vishing"],1,"Piggybacking uses another person's legitimate access to enter a restricted area without authorization."),
+Q(1,43,"Which of the following types of identity theft does the perpetrator steal a social security number and use it with a combination of a fake name, date of birth, address, and other details required for creating a new identity?",["Tax identity theft","Criminal identity theft","Synthetic identity theft","Insurance identity theft"],2,"Synthetic identity theft combines real identifiers with fabricated personal details to create a new identity."),
+Q(1,44,"Steve, an attacker, targeted John to gain control over his machine through a DoS/DDoS attack. In this process, he flooded John's machine with fraudulent hardware updates that appear to be sent by an authorized vendor. Upon clicking on the updates, malicious code was executed on John's machine, allowing Steve to take control over the machine.",["Permanent DoS (PDoS)","Peer-to-peer attack","Smurf attack","Distributed reflection DoS (DRDoS)"],0,"PDoS attacks can corrupt or compromise firmware or hardware so the device becomes unusable or requires repair or replacement."),
+Q(1,45,"James is a professional hacker attempting to gain access to an industrial system through a remote control device. In this process, he used a specially designed radio transceiver device to sniff radio commands and inject arbitrary code into the firmware of the remote controllers to maintain persistence.",["Command injection","Malicious reprogramming attack","Abusing reprogramming attack","Re-pairing with a malicious RF controller"],1,"Injecting arbitrary code into firmware to maintain persistence is malicious reprogramming."),
+Q(1,46,"Daniel, a professional hacker, targeted Alice and lured her into downloading a malicious app from a third-party app store. Upon installation, the core malicious code inside the application started infecting other legitimate apps in Alice's mobile device. Daniel overloaded Alice's device with irrelevant and fraudulent advertisements through the infected app for financial gain.",["SMiShing attack","SIM card attack","Bluebugging attack","Agent Smith attack"],3,"Agent Smith-style malware infects or replaces legitimate mobile apps and can inject fraudulent advertisements."),
+Q(1,47,"Alana, an employee in an organization, took a short break after spending exhausting hours on a project. For relaxation, she went to a cafeteria with her laptop, where she connected to the public Internet. While browsing the web, she received a project modifications file on her mail and reverted with another file that contained the required changes.",["Mixing personal and private data","Improper disposing of devices","Sharing confidential data on unsecured networks","Endpoint security issue"],2,"Exchanging project files over a public network can expose confidential data to interception."),
+Q(1,48,"Which of the following civilian acts enforces 'Electronic Transactions and Code Set Standards'?",["ISO/IEC","PCI/DSS","HIPAA","Sarbanes Oxley Act"],2,"HIPAA includes standards for electronic healthcare transactions and medical code sets."),
+Q(1,49,"In which of the following phases of the cyber kill chain methodology does the adversary create a tailored malicious payload based on the vulnerabilities identified?",["Command and control","Weaponization","Installation","Exploitation"],1,"Weaponization is the phase where the adversary prepares a malicious payload tailored to the target and identified vulnerabilities."),
+Q(1,50,"Paola, a professional hacker, configured her wireless router in an organization's premises and advertised it with a spoofed SSID. She lured victims to connect to the router by sending the fake SSID. She started sniffing all the traffic from the victims that is passing through his wireless router.",["Key reinstallation attack","Rogue AP attack","AP MAC spoofing attack","Ad-hoc connection attack"],1,"A rogue access point impersonates or imitates a trusted wireless network to lure users and intercept their traffic."),
+Q(1,51,"Bob, a network administrator in a company, manages network connectivity to 200 employees in six different rooms. Every employee has their own laptop to connect to the Internet through a wireless network, but the company has only one broadband connection.",["Multiple wireless access points","Extension to wired network","3G/4G hotspot","LAN-to-LAN wireless network"],0,"Multiple access points can provide coverage across several rooms while connecting users to the same underlying network and Internet connection."),
+Q(1,52,"Which of the following attacks does an attacker use to breach the security mechanism of a paired Bluetooth device for eavesdropping on the data being carried by short-distance communication protocols?",["Bluebugging","KNOB attack","Bluejacking","Bluesmacking"],1,"The KNOB attack weakens Bluetooth encryption key negotiation and can enable eavesdropping on paired-device communications."),
+Q(1,53,"Which of the following tools allows an attacker to crack the passwords of the target system and gain unauthorized access?",["SuperEnum","John the Ripper","VirusTotal","theHarvester"],1,"John the Ripper is a password-auditing and cracking tool that attempts to recover passwords from hashes."),
+Q(1,54,"Which of the following malware components hides the malware presence and protects the malware from reverse engineering, thus making it difficult to be detected by security solutions?",["Crypter","Injector","Payload","Exploit"],0,"A crypter encrypts or obfuscates malware to hinder reverse engineering and evade detection."),
+Q(1,55,"In which of the following phases of session hijacking does an attacker change the sequence number or acknowledgment number (SEQ/ACK) of the server to halt data transmission to a legitimate user?",["Session ID prediction","Command injection","Packet injection","Session desynchronization"],3,"Manipulating TCP SEQ/ACK values can desynchronize the legitimate client and server and disrupt their session."),
+Q(1,56,"Clark, a professional hacker, is attempting to shut down an organization's network. In this process, he used sniffing tools to intercept legitimate messages from valid communication. He continuously sent the intercepted messages to the target device to perform a denial-of-service attack or crash the target device.",["Fault injection attack","Jamming attack","BlueBorne attack","Replay attack"],3,"A replay attack captures legitimate messages and retransmits them, potentially disrupting a target or causing repeated unauthorized actions."),
+Q(1,57,"Henry is a professional hacker who is attempting to hack Bluetooth-enabled devices. In this process, Henry exploited a target device's Bluetooth features to gain remote access to the device without the victim's knowledge and performed a backdoor attack before returning control to the victim.",["SMiShing","Agent Smith attack","Bluebugging","Bluesnarfing"],2,"Bluebugging allows unauthorized remote control of Bluetooth-enabled devices and can support backdoor-style actions."),
+Q(1,58,"Michael is an attacker who aims to hack Bob's system. He started collecting data without any active interaction with Bob's system. Using this technique, Michael can extract sensitive information from unencrypted data.",["Active attack","Passive attack","Insider attack","Close-in attack"],1,"A passive attack monitors or collects information without directly modifying or interacting with the target system."),
+Q(1,59,"Which of the following web application vulnerabilities allow untrusted data to be interpreted and executed as part of a command or query?",["Insufficient monitoring","Broken access control","Insufficient logging","Injection flaws"],3,"Injection flaws occur when untrusted input is interpreted as part of a command or query, such as SQL or OS commands."),
+Q(1,60,"Which of the following techniques does an attacker use to compromise the network switches' security for sniffing all the traffic passing through it?",["SYN flooding","MAC flooding","DNS spoofing","UDP flooding"],1,"MAC flooding overwhelms a switch's CAM table, which may cause traffic to be forwarded more broadly and make sniffing easier."),
+Q(1,61,"Sam recently joined as a network admin in an organization. He failed to comprehend all the security practices during his training but pretended to have acquired adequate skills. With mediocre knowledge, he left a few loopholes in the firewall implementation that eventually led to unwanted network intrusions.",["External threat","Natural threat","Unintentional threat","Intentional threat"],2,"The weakness resulted from error and inadequate knowledge rather than deliberate malicious intent."),
+Q(1,62,"Cynthia, a professional hacker, is attempting to obtain the target's system passwords from the system's database. In this process, she extracted the target's password hash dump and used pre-computed hashes from the rainbow table to crack the password.",["Active online attack","Non-electric attack","Passive online attack","Offline attack"],3,"The hashes are cracked away from the live authentication service, making this an offline password attack."),
+Q(1,63,"Stephen, an attacker, decided to gain access to an organization's server. He identified a user with access to the remote server. He used sniffing programs to gain the user's credentials and captured the authentication tokens transmitted by the user. Then, he transmitted the captured tokens back to the server to gain unauthorized access.",["Brute-force attack","SQL injection","Internal monologue","Replay attack"],3,"The attacker reuses captured valid authentication tokens to impersonate the legitimate user."),
+Q(1,64,"Which of the following countermeasures helps security professionals defend against IoT attacks?",["Disable Telnet (port 23)","Enable the UPnP port on routers","Enable the 'guest' and 'demo' user accounts if disabled","Disable traffic monitoring on port 48101"],0,"Telnet transmits data without strong encryption and should generally be disabled on IoT devices when not required."),
+Q(1,65,"Which of the following entities in the NIST cloud deployment reference architecture manages cloud services in terms of use, performance, and delivery and maintains the relationship between cloud providers and consumers?",["Cloud auditor","Cloud provider","Cloud carrier","Cloud broker"],3,"A cloud broker manages the use, performance, and delivery of cloud services and mediates between providers and consumers."),
+Q(1,66,"Johnson is a professional hacker who targeted an organization's customers and decided to crack their system passwords. In this process, he found a list of valid customers, created a list of possible passwords, ranked the passwords from high to low probability, and started keying in each password in the target system until the correct password is discovered.",["Brute-force attack","Dictionary attack","Password guessing","Rainbow table attack"],2,"Password guessing tries likely passwords, often prioritized by probability, against known accounts."),
+Q(1,67,"Which of the following methods is a network segregation technique used to isolate networks and assets to impose and maintain strong access control mechanisms?",["Business network","Industrial network","Zones and conduits","Industrial protocols"],2,"In industrial security, zones group assets with similar requirements and conduits control communication between zones."),
+Q(1,68,"Morris, an attacker, targeted an application server to manipulate its services. He succeeded by employing input validation attacks such as XSS that exploited vulnerabilities present in the programming logic of an application.",["Database layer","Business layer","Presentation layer","Client layer"],1,"The business layer contains the application's core processing and programming logic."),
+Q(1,69,"Melissa, an ex-employee of an organization, was fired because of misuse of resources and security violations. She sought revenge against the company and targeted its network, as she is already aware of its network topology.",["Compromised insider","Negligent insider","Malicious insider","Professional insider"],2,"She intentionally uses internal knowledge to harm the organization, which fits a malicious-insider threat."),
+Q(1,70,"A type of malware allows an attacker to trick the target entity into performing a predefined action, and upon its activation, it grants the attacker unrestricted access to all the data stored on the compromised system.",["Worm","Trojan","Keylogger","Botnet"],1,"A Trojan disguises malicious functionality as something legitimate and can provide unauthorized access when executed."),
+Q(1,71,"Which of the following guidelines must be followed to protect a mobile device from malicious attackers?",["Always load too many applications and auto-upload photos to social networks","Never install applications from trusted stores","Always connect to two separate networks, such as Wi-Fi and Bluetooth, simultaneously","Maintain configuration control and management"],3,"Secure configuration management helps enforce safe settings, permissions, updates, and device policies."),
+Q(1,72,"Which of the following techniques involves gaining information by listening to someone's conversion or reading private messages being shared between them?",["Dumpster diving","Tailgating","Eavesdropping","Piggybacking"],2,"Eavesdropping is secretly listening to or intercepting private communications to obtain information."),
+Q(1,73,"Which of the following layers in the IoT system has security issues such as insecure API, lack of encryption in communication channels, lack of authentication, and lack of storage security?",["Mobile","Network","Application","Cloud"],3,"Cloud-layer risks commonly include insecure APIs, weak authentication, unencrypted communications, and insecure storage."),
+Q(1,74,"Wesley, a fitness freak, purchased a new Apple smartwatch and synced it with a mobile app downloaded from an unauthorized third party. At the end of the day, when Wesley attempted to access his fitness report from the app, it generated an unusual report and asked for some unnecessary permissions to view it.",["Insecure authentication","Client code quality","Insecure data storage","Improper platform usage"],3,"Requesting unnecessary permissions and misusing mobile platform features are examples of improper platform usage."),
+Q(1,75,"Below are the various stages of the virus lifecycle: 1) Replication 2) Detection 3) Incorporation 4) Design 5) Execution of the damage routine 6) Launch. What is the correct sequence of stages involved in the virus lifecycle?",["3-->1-->2-->6-->5-->4","4-->2-->3-->5-->6-->1","1-->2-->3-->4-->5-->6","4-->1-->6-->2-->3-->5"],3,"The sequence is design, replication, launch, detection, incorporation, and execution of the damage routine."),
+
+/* ================= PART II - NEW GENERATED QUESTIONS ================= */
+Q(2,1,"Which solution checks device identity or posture before allowing network access?",["NAC","NTP","NAT","NAS"],0,"Network Access Control evaluates users or devices and enforces access based on policy."),
+Q(2,2,"Which Wi-Fi control is weak as a primary security measure because addresses can be spoofed?",["MAC filtering","WPA3 encryption","802.1X authentication","Strong passphrases"],0,"MAC addresses can be observed and spoofed, so filtering should not be relied upon as strong authentication."),
+Q(2,3,"Which tool is commonly used for password cracking with GPU acceleration?",["Hashcat","Wireshark","tcpdump","YARA"],0,"Hashcat is optimized for cracking password hashes, especially using GPUs."),
+Q(2,4,"Which backup rule recommends three copies of data, on two media types, with one copy offsite?",["3-2-1 backup rule","Least privilege rule","Five nines rule","Bell-LaPadula rule"],0,"The 3-2-1 rule improves resilience by maintaining multiple copies across different locations/media."),
+Q(2,5,"Which malware activates when a specific condition or date is met?",["Logic bomb","Rootkit","Adware","Downloader"],0,"A logic bomb executes malicious actions only when predefined conditions occur."),
+Q(2,6,"Which risk response stops the risky activity entirely?",["Avoidance","Acceptance","Transfer","Detection"],0,"Avoidance eliminates risk by discontinuing the activity that creates it."),
+Q(2,7,"Which fraud commonly uses email impersonation to trick staff into sending money or sensitive information?",["Business email compromise","DNS poisoning","Session fixation","Wardriving"],0,"BEC relies on trusted-looking email impersonation to manipulate business processes."),
+Q(2,8,"Which wireless security protocol introduced SAE to improve personal network authentication?",["WPA3","WEP","WPA with TKIP","Open Wi-Fi"],0,"WPA3-Personal uses SAE, which improves resistance to offline password guessing compared with WPA2-PSK."),
+Q(2,9,"Which security control inspects HTTP traffic and can block common web attacks such as SQL injection or XSS patterns?",["WAF","NTP","SNMP","DHCP relay"],0,"A Web Application Firewall filters and monitors HTTP/S traffic to protect web applications."),
+Q(2,10,"Which security principle ensures that users receive only the permissions required to perform their job?",["Separation of duties","Least privilege","Fail-open design","Security through obscurity"],1,"Least privilege limits each account to only the access needed, reducing damage if the account is abused."),
+Q(2,11,"Which mobile management approach controls entire devices, including configuration and security policies?",["MDM","MFA","NAT","SIEM"],0,"Mobile Device Management enforces policies and settings at the device level."),
+Q(2,12,"Which Layer 2 attack attempts to access traffic from another VLAN by manipulating trunking behavior?",["VLAN hopping","DNS spoofing","Smurf attack","SQL injection"],0,"VLAN hopping abuses switch trunking or tagging behavior to reach traffic from another VLAN."),
+Q(2,13,"What is the best general defense against SQL injection in application code?",["Prepared statements with parameterized queries","Disabling HTTPS","Increasing session timeout","Using default database accounts"],0,"Parameterized queries separate code from data so user input is not executed as SQL syntax."),
+Q(2,14,"Which protocol framework is mainly used to delegate authorization to applications without sharing the user's password?",["OAuth 2.0","Telnet","WEP","POP3"],0,"OAuth 2.0 lets users grant limited access tokens to applications without exposing credentials."),
+Q(2,15,"Which attack poisons the mapping between IP addresses and MAC addresses on a local network?",["ARP poisoning","DNS zone transfer","SYN scan","ICMP redirect only"],0,"ARP poisoning sends false ARP messages to associate an attacker's MAC address with another IP address."),
+Q(2,16,"Which OWASP category involves users accessing functions or data they are not authorized to use?",["Broken access control","Cryptographic failures","Security logging failures","Insecure design"],0,"Broken access control occurs when authorization rules are missing, weak, or bypassed."),
+Q(2,17,"Which forensic principle requires analysts to avoid altering original evidence whenever possible?",["Preservation of evidence","Privilege escalation","Defense in depth","Separation of duties"],0,"Forensic work should preserve original evidence and use verified copies for analysis."),
+Q(2,18,"Which technology focuses on detecting and responding to threats on workstations and servers?",["EDR","BGP","CDN","SNMP"],0,"Endpoint Detection and Response monitors endpoint activity and supports investigation and containment."),
+Q(2,19,"Which security platform collects logs from many sources and correlates them for monitoring and alerting?",["SIEM","MDM","NAC","DHCP"],0,"A SIEM centralizes logs, correlates events, and supports detection, alerting, and investigation."),
+Q(2,20,"Which metric defines the maximum tolerable time to restore a service after disruption?",["RTO","RPO","MTU","TTL"],0,"Recovery Time Objective is the target time within which a process or service should be restored."),
+Q(2,21,"Which encryption type uses the same key for encryption and decryption?",["Symmetric encryption","Asymmetric encryption","Hashing","Tokenization"],0,"Symmetric encryption uses one shared secret key for both encryption and decryption."),
+Q(2,22,"Which identity layer built on OAuth 2.0 provides user authentication information through ID tokens?",["OpenID Connect","SNMPv1","NetBIOS","PAP"],0,"OpenID Connect adds authentication and ID tokens on top of OAuth 2.0."),
+Q(2,23,"Which risk response shifts financial impact to another party, such as through insurance?",["Transfer","Avoidance","Acceptance","Exploitation"],0,"Risk transfer moves or shares financial consequences with another party, often through contracts or insurance."),
+Q(2,24,"Which identifier is assigned to publicly known cybersecurity vulnerabilities?",["CVE","CVSS","CWE","CPE"],0,"CVE provides a common identifier for publicly disclosed vulnerabilities."),
+Q(2,25,"Which malware hides privileged access and can conceal files, processes, or registry keys?",["Rootkit","Adware","Macro virus","Worm"],0,"A rootkit hides its presence and can maintain stealthy privileged access."),
+Q(2,26,"Which port is commonly associated with HTTPS traffic?",["21","22","80","443"],3,"HTTPS normally uses TCP port 443 to provide encrypted web communication."),
+Q(2,27,"Which term describes unauthorized movement of data out of an organization?",["Exfiltration","Ingress filtering","Segmentation","Provisioning"],0,"Exfiltration is the unauthorized extraction or transfer of data from a system or network."),
+Q(2,28,"Which vulnerability occurs when a user can change an object ID in a request and access another user's record?",["IDOR","XSS","XXE","Buffer overflow"],0,"Insecure Direct Object Reference is a broken access control issue where object identifiers are not properly authorized."),
+Q(2,29,"Which malware encrypts files and demands payment for recovery?",["Ransomware","Spyware","Adware","Rootkit"],0,"Ransomware denies access to data, often by encryption, and demands payment or action for restoration."),
+Q(2,30,"Which rule format is commonly used to identify malware based on strings and binary patterns?",["YARA","SAML","STIX only","CVSS"],0,"YARA rules describe patterns that can identify malware families or suspicious files."),
+Q(2,31,"Which testing method sends unexpected, random, or malformed inputs to find crashes and logic errors?",["Fuzz testing","Shoulder surfing","Whitelisting","Full backup"],0,"Fuzzing bombards software with unusual inputs to expose crashes, memory errors, or validation flaws."),
+Q(2,32,"Which system detects suspicious network activity but does not automatically block it by default?",["IDS","IPS","WAF","NAT"],0,"An intrusion detection system alerts on suspicious activity, while an IPS can block traffic inline."),
+Q(2,33,"Which behavior often indicates malware is periodically contacting a command-and-control server?",["Beaconing","Defragmentation","Compression","Load balancing"],0,"Beaconing is repeated outbound communication used by malware to check in with C2 infrastructure."),
+Q(2,34,"Which attack places malicious script in a web page so it runs in another user's browser?",["Cross-site scripting","DNS spoofing","ARP poisoning","Bluejacking"],0,"XSS occurs when untrusted script executes in a victim's browser in the context of a trusted site."),
+Q(2,35,"Which control combines multiple independent safeguards so that failure of one control does not expose the whole system?",["Defense in depth","Single sign-on","Port forwarding","Implicit trust"],0,"Defense in depth uses layered controls such as firewalls, MFA, monitoring, and endpoint protection."),
+Q(2,36,"Which tool is commonly used for memory forensics and analyzing RAM dumps?",["Volatility","Burp Suite","Nikto","Hydra"],0,"Volatility is a framework for analyzing memory images to identify processes, connections, injected code, and artifacts."),
+Q(2,37,"Which container security practice helps reduce supply-chain risk before deployment?",["Scan images for vulnerabilities","Run all containers as root","Disable image signing","Use unknown base images"],0,"Image scanning identifies vulnerable packages and risky configurations before containers run in production."),
+Q(2,38,"Which knowledge base maps adversary tactics and techniques across the attack lifecycle?",["MITRE ATT&CK","PCI DSS","ISO 9001","COBIT only"],0,"MITRE ATT&CK organizes known adversary behaviors into tactics, techniques, and procedures."),
+Q(2,39,"Which scoring system is commonly used to rate the severity of vulnerabilities?",["CVSS","SMTP","LDAP","SAML"],0,"CVSS provides a standardized way to communicate vulnerability severity using metrics and a numerical score."),
+Q(2,40,"Which cloud storage risk occurs when a bucket is accidentally made publicly readable?",["Misconfiguration","DDoS reflection","Bluebugging","Tailgating"],0,"Public exposure of storage buckets is usually caused by incorrect permissions or access policies."),
+Q(2,41,"Which attack tricks a browser into sending an unwanted authenticated request to a web application?",["CSRF","SQL injection","DNS amplification","MAC flooding"],0,"Cross-Site Request Forgery abuses a victim's authenticated browser session to perform unintended actions."),
+Q(2,42,"Which security model assumes no user or device should be trusted automatically, even inside the network?",["Zero Trust","Flat network","Implicit trust","Open perimeter"],0,"Zero Trust continuously verifies identity, device state, and authorization instead of trusting based on network location."),
+Q(2,43,"Which process reduces risk by applying vendor updates that fix known vulnerabilities?",["Patch management","Packet crafting","Banner grabbing","Port mirroring"],0,"Patch management identifies, tests, and deploys updates that remediate known security weaknesses."),
+Q(2,44,"Which mechanism converts a password into a fixed-length value that should not be reversible?",["Encryption","Hashing","Encoding","Compression"],1,"Hashing is one-way and is commonly used to store password verifiers rather than plaintext passwords."),
+Q(2,45,"Which cookie attribute helps prevent client-side scripts from reading a session cookie?",["Secure","HttpOnly","SameSite","Expires"],1,"HttpOnly instructs browsers not to expose the cookie to JavaScript, reducing theft through XSS."),
+Q(2,46,"In MFA, a hardware token or phone authenticator app is an example of which factor?",["Something you know","Something you have","Something you are","Somewhere you are"],1,"A token or enrolled phone is a possession factor because the user must have the device."),
+Q(2,47,"Which social engineering attack targets a specific person or small group with customized messages?",["Spear phishing","Spam","Wardriving","Piggybacking"],0,"Spear phishing is targeted and personalized to increase credibility."),
+Q(2,48,"Which AAA protocol separates authentication, authorization, and accounting more distinctly and commonly uses TCP port 49?",["TACACS+","RADIUS","LDAP","DNS"],0,"TACACS+ uses TCP port 49 and separates AAA functions, often for network device administration."),
+Q(2,49,"Which security tool is primarily used to capture and inspect network packets?",["Wireshark","John the Ripper","Hashcat","Autopsy"],0,"Wireshark captures and analyzes packets to help investigate network behavior and security events."),
+Q(2,50,"Which cookie attribute helps ensure a cookie is sent only over HTTPS?",["Secure","Path","Domain","Max-Age"],0,"The Secure flag prevents a browser from sending the cookie over unencrypted HTTP."),
+Q(2,51,"Which tool is commonly used to perform vulnerability scanning of hosts and services?",["Nessus","GnuPG","KeePass","Notepad"],0,"Nessus scans systems for known vulnerabilities, misconfigurations, and missing patches."),
+Q(2,52,"Which technology logically separates devices into different broadcast domains on the same physical switch?",["VLAN","NAT","DNS","SMTP"],0,"Virtual LANs segment a switch into separate logical networks to support isolation and access control."),
+Q(2,53,"Which structured language is used to represent cyber threat intelligence objects such as indicators and attack patterns?",["STIX","SMTP","SNMP","ICMP"],0,"STIX is a structured format for sharing threat intelligence information."),
+Q(2,54,"Which documentation preserves who collected, handled, transferred, and stored digital evidence?",["Chain of custody","Change request","Service catalog","Asset tag"],0,"Chain of custody documents evidence handling to support integrity and admissibility."),
+Q(2,55,"Which Nmap scan type sends SYN packets and is often called a half-open scan?",["TCP connect scan","SYN scan","UDP scan","Idle scan"],1,"A SYN scan sends SYN packets and evaluates responses without completing the full TCP handshake."),
+Q(2,56,"Which standard is commonly used for exchanging authentication and authorization data between an identity provider and a service provider using assertions?",["SAML","SNMP","SIP","SMB"],0,"SAML uses XML-based assertions for federated authentication and authorization."),
+Q(2,57,"Which metric defines the maximum acceptable amount of data loss measured in time?",["RPO","RTO","MTBF","MTTR"],0,"Recovery Point Objective defines how much recent data the organization can afford to lose."),
+Q(2,58,"Which attack compromises a website commonly visited by the target group in order to infect visitors?",["Watering hole attack","Shoulder surfing","Dumpster diving","Bluejacking"],0,"A watering hole attack infects or abuses a site trusted by the intended victims."),
+Q(2,59,"Which protocol uses tickets to support authentication in many enterprise networks?",["Kerberos","FTP","Telnet","ICMP"],0,"Kerberos uses tickets issued by a trusted authority to authenticate users and services."),
+Q(2,60,"Which incident response phase removes malware, unauthorized accounts, or root causes from affected systems?",["Eradication","Preparation","Identification","Post-incident review"],0,"Eradication removes the threat and root cause after containment."),
+Q(2,61,"Which phishing attack specifically targets high-ranking executives or senior officials?",["Whaling","Vishing","Smishing","Pharming"],0,"Whaling is phishing aimed at executives or other high-value individuals."),
+Q(2,62,"What is the purpose of adding a salt before hashing passwords?",["To compress the password","To make identical passwords produce different hashes","To encrypt network traffic","To disable MFA"],1,"A salt is a unique random value that helps defeat rainbow tables and identical-hash comparisons."),
+Q(2,63,"Which protocol is commonly used to exchange cyber threat intelligence over HTTPS?",["TAXII","Telnet","TFTP","RIP"],0,"TAXII defines services and message exchanges for sharing STIX threat intelligence."),
+Q(2,64,"Which technique hides data or commands inside DNS queries and responses?",["DNS tunneling","ARP flooding","MAC cloning","NTP amplification only"],0,"DNS tunneling encodes traffic within DNS messages to bypass controls or establish covert channels."),
+Q(2,65,"Which tool is commonly used for web proxy testing and intercepting HTTP/S requests during authorized assessments?",["Burp Suite","Autopsy","FTK Imager","Nessus Agent"],0,"Burp Suite acts as an intercepting proxy and toolkit for web application security testing."),
+Q(2,66,"Which standard provides port-based network access control for wired and wireless networks?",["802.1X","802.11b","802.3af","802.15.4"],0,"IEEE 802.1X controls network access using authentication before allowing normal traffic."),
+Q(2,67,"Which network area is commonly used to host public-facing servers while isolating them from the internal LAN?",["DMZ","Loopback","Root zone","Broadcast domain"],0,"A DMZ separates exposed services from the trusted internal network to reduce impact if those services are compromised."),
+Q(2,68,"Which network of compromised devices is remotely controlled by an attacker?",["Botnet","Honeynet","Subnet","VLAN"],0,"A botnet is a collection of infected systems controlled by a botmaster or command-and-control infrastructure."),
+Q(2,69,"Which cloud model shares responsibility between provider and customer depending on IaaS, PaaS, or SaaS?",["Shared responsibility model","Single-owner model","Implicit trust model","No-responsibility model"],0,"Cloud security duties are divided between the provider and customer based on the service model."),
+Q(2,70,"Which tactic describes gaining higher-level permissions after initial compromise?",["Privilege escalation","Exfiltration","Reconnaissance","Delivery"],0,"Privilege escalation increases access rights, such as moving from a standard user to administrator."),
+Q(2,71,"Which Kubernetes object is commonly used to store sensitive values, although it still requires proper access control and encryption?",["Secret","Pod only","Ingress","ReplicaSet"],0,"Kubernetes Secrets store sensitive data such as tokens or passwords but must be protected carefully."),
+Q(2,72,"Which secure coding practice reviews code changes before deployment to catch defects and risky logic?",["Peer code review","Credential reuse","Hardcoding secrets","Debug mode in production"],0,"Peer review can identify security issues, logic flaws, and accidental exposure before release."),
+Q(2,73,"Which cookie attribute helps reduce cross-site request forgery risk by limiting cross-site cookie sending?",["SameSite","HttpOnly","Secure","Priority"],0,"SameSite restricts when cookies are included in cross-site requests, helping mitigate CSRF."),
+Q(2,74,"Which malware records keystrokes to steal credentials or sensitive information?",["Keylogger","Worm","Logic bomb","Adware"],0,"A keylogger captures keyboard input, often to steal passwords, messages, or financial information."),
+Q(2,75,"Which part of the CIA triad is most directly protected by checksums and digital signatures?",["Availability","Confidentiality","Integrity","Non-repudiation"],2,"Checksums and signatures help detect unauthorized changes to data, which supports integrity."),
+Q(2,76,"In IaaS, which responsibility usually remains with the customer?",["Securing operating systems and applications","Maintaining the physical data center","Replacing failed physical disks","Providing building security"],0,"In IaaS, the provider manages physical infrastructure, while the customer secures OS, apps, identities, and data."),
+Q(2,77,"Which type of XSS is stored on the server and served to victims later?",["Stored XSS","Reflected XSS","DOM XSS","Blind XSS"],0,"Stored XSS persists in the application, such as in comments or profiles, and executes when users view it."),
+Q(2,78,"Which testing method evaluates a running application from the outside by sending requests and observing behavior?",["DAST","SAST","Hashing","Tokenization"],0,"Dynamic Application Security Testing tests a live application during execution."),
+Q(2,79,"Which control is designed to prevent sensitive data from leaving the organization without authorization?",["DLP","DHCP","NTP","ARP"],0,"Data Loss Prevention tools monitor and restrict movement of sensitive data through email, web, endpoints, or storage."),
+Q(2,80,"In the Cyber Kill Chain, which phase involves transmitting the weaponized payload to the victim?",["Delivery","Reconnaissance","Actions on objectives","Installation"],0,"Delivery is the phase where the attacker sends the weaponized payload through email, web, USB, or another channel."),
+Q(2,81,"Which technique abuses legitimate administration tools to avoid detection?",["Living off the land","Bluejacking","SQL normalization","Data masking"],0,"Living-off-the-land techniques use trusted tools such as PowerShell or WMI for malicious purposes."),
+Q(2,82,"Which mechanism provides message integrity and authenticity using a shared secret key?",["HMAC","Base64","CRC only","Compression"],0,"HMAC combines a hash function with a shared secret key to verify integrity and authenticity."),
+Q(2,83,"Which cryptographic control provides non-repudiation when properly implemented with a private key?",["Digital signature","Symmetric encryption","Password salting","File compression"],0,"A digital signature proves that the holder of a private key signed the data and that it was not altered."),
+Q(2,84,"Which analysis identifies critical business processes and the impact of disruptions?",["Business impact analysis","Port scan","Packet capture","Password audit"],0,"A BIA identifies critical functions, dependencies, and impacts to guide continuity planning."),
+Q(2,85,"Which term describes the likelihood and impact of a threat exploiting a vulnerability?",["Risk","Hash","Port","Protocol"],0,"Risk considers how likely exploitation is and what impact it would have."),
+Q(2,86,"Which practice avoids granting a container unnecessary Linux capabilities and host privileges?",["Run with least privilege","Run as privileged root","Mount the host filesystem read-write","Disable isolation"],0,"Restricting capabilities, root access, and host mounts limits impact if a container is compromised."),
+Q(2,87,"Which protocol is commonly used to securely administer network devices over TCP port 22?",["Telnet","FTP","SSH","SMTP"],2,"SSH provides encrypted remote command-line access and commonly listens on TCP port 22."),
+Q(2,88,"Which wireless attack sends frames that force clients to disconnect from an access point?",["Deauthentication attack","Directory traversal","Bluesnarfing","Credential stuffing"],0,"Deauthentication attacks abuse management frames to disconnect wireless clients."),
+Q(2,89,"Which term describes a weakness that could be exploited by a threat?",["Vulnerability","Asset","Control","Impact"],0,"A vulnerability is a weakness in a system, process, or configuration."),
+Q(2,90,"Which attack lifecycle activity involves moving from one compromised system to another inside the network?",["Lateral movement","Initial access","Reconnaissance","Weaponization"],0,"Lateral movement expands access across internal systems after an initial compromise."),
+Q(2,91,"Which deployment allows a decoy system to attract attackers and study their behavior?",["Honeypot","Jump server","Load balancer","Proxy ARP"],0,"A honeypot is a monitored decoy designed to lure attacks and collect intelligence."),
+Q(2,92,"Which incident response phase occurs before an incident and includes policies, tools, and training?",["Preparation","Eradication","Recovery","Lessons learned"],0,"Preparation establishes the people, processes, tools, and readiness needed before incidents occur."),
+Q(2,93,"Which testing method analyzes application source code or binaries without running the application?",["SAST","DAST","Fuzzing only","Port scanning"],0,"Static Application Security Testing examines code or binaries without executing the application."),
+Q(2,94,"Which vulnerability allows an attacker to include or access files outside the intended web directory using path sequences?",["Directory traversal","Clickjacking","Session fixation","Cache busting"],0,"Directory traversal uses sequences such as ../ to access files outside the intended directory."),
+Q(2,95,"Which mobile management approach focuses on controlling business applications and their data?",["MAM","ARP","BGP","NTP"],0,"Mobile Application Management protects and manages specific applications and their data containers."),
+Q(2,96,"Why should investigators hash a forensic image after acquisition?",["To verify evidence integrity","To encrypt the evidence automatically","To reduce file size","To remove metadata"],0,"Matching hash values help prove the forensic copy has not changed."),
+Q(2,97,"Which encryption type uses a public key and private key pair?",["Asymmetric encryption","Symmetric encryption","Hashing","Encoding"],0,"Asymmetric cryptography uses mathematically related public and private keys for encryption or signing."),
+Q(2,98,"Which wireless attack uses a fake access point that imitates a legitimate network name?",["Evil twin attack","Ping sweep","DNS amplification","Fragment overlap"],0,"An evil twin AP imitates a trusted SSID to lure users into connecting through the attacker."),
+Q(2,99,"Which incident response phase focuses on limiting damage and preventing further spread?",["Containment","Recovery","Lessons learned","Reporting only"],0,"Containment isolates affected systems or accounts to stop further impact while preserving evidence."),
+Q(2,100,"Which risk response reduces risk by implementing controls?",["Mitigation","Acceptance","Transfer","Avoidance"],0,"Mitigation lowers risk through safeguards such as patching, segmentation, MFA, or monitoring.")
+];
+
+
+(function(){
+  const $ = id => document.getElementById(id);
+  const LETTERS = ["A","B","C","D"];
+  const KEY = "ehe-reviewer-v1";
+  let mode = "all", shuffle = false, order = [], pos = 0;
+  let answers = {};   // key "p-n" -> chosen index
+  let optOrder = {};  // key -> array of original option indexes (display order)
+
+  const keyOf = q => q.p + "-" + q.n;
+
+  function save(){
+    try{ localStorage.setItem(KEY, JSON.stringify({mode,shuffle,answers,order,pos,optOrder})); }catch(e){}
+  }
+  function load(){
+    try{
+      const s = JSON.parse(localStorage.getItem(KEY) || "null");
+      if(!s) return false;
+      mode = s.mode; shuffle = s.shuffle; answers = s.answers || {}; order = s.order || []; pos = s.pos || 0; optOrder = s.optOrder || {};
+      return order.length > 0 && order.every(i => i >= 0 && i < QUESTIONS.length);
+    }catch(e){ return false; }
+  }
+  function theme(t){
+    document.documentElement.setAttribute("data-theme", t);
+    $("themeBtn").textContent = t === "dark" ? "☀️ Light" : "🌙 Dark";
+    try{ localStorage.setItem("ehe-theme", t); }catch(e){}
+  }
+  function initTheme(){
+    let t = null;
+    try{ t = localStorage.getItem("ehe-theme"); }catch(e){}
+    if(!t) t = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    theme(t);
+  }
+  function shuffled(a){
+    a = a.slice();
+    for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+    return a;
+  }
+  function build(){
+    order = [];
+    QUESTIONS.forEach((q,i)=>{ if(mode==="all" || String(q.p)===mode) order.push(i); });
+    if(shuffle) order = shuffled(order);
+    pos = 0; answers = {}; optOrder = {};
+    $("resultCard").classList.add("hidden");
+    $("quizCard").classList.remove("hidden");
+    render(); save();
+  }
+  function displayOrder(q){
+    const k = keyOf(q);
+    if(!optOrder[k]){
+      const idx = q.c.map((_,i)=>i);
+      optOrder[k] = shuffle ? shuffled(idx) : idx;
+    }
+    return optOrder[k];
+  }
+  function stats(){
+    let c=0,w=0;
+    order.forEach(i=>{
+      const q=QUESTIONS[i], a=answers[keyOf(q)];
+      if(a===undefined) return;
+      a===q.a ? c++ : w++;
+    });
+    return {c,w,done:c+w,total:order.length};
+  }
+  function renderScore(){
+    const s = stats();
+    $("sCorrect").textContent = s.c;
+    $("sWrong").textContent = s.w;
+    $("sAnswered").textContent = s.done + "/" + s.total;
+    $("sPct").textContent = s.done ? Math.round(s.c / s.done * 100) + "%" : "0%";
+    $("barFill").style.width = (s.total ? s.done / s.total * 100 : 0) + "%";
+  }
+  function renderGrid(){
+    const g = $("grid"); g.innerHTML = "";
+    order.forEach((qi,p)=>{
+      const q = QUESTIONS[qi], a = answers[keyOf(q)];
+      const b = document.createElement("button");
+      b.textContent = p+1;
+      b.title = "Part " + (q.p===1?"I":"II") + " · Item " + q.n;
+      if(a!==undefined) b.className = a===q.a ? "g" : "r";
+      if(p===pos) b.classList.add("cur");
+      b.onclick = () => { pos = p; render(); save(); window.scrollTo({top:0,behavior:"smooth"}); };
+      g.appendChild(b);
+    });
+  }
+  function render(){
+    const q = QUESTIONS[order[pos]], k = keyOf(q), chosen = answers[k];
+    $("qTag").textContent = "Part " + (q.p===1?"I":"II") + " · Item " + q.n + "   (" + (pos+1) + " of " + order.length + ")";
+    $("qText").textContent = q.q;
+    const box = $("opts"); box.innerHTML = "";
+    displayOrder(q).forEach((orig,di)=>{
+      const b = document.createElement("button");
+      b.className = "opt"; b.type = "button";
+      b.innerHTML = '<span class="letter"></span><span class="otext"></span><span class="mark"></span>';
+      b.querySelector(".letter").textContent = LETTERS[di];
+      b.querySelector(".otext").textContent = q.c[orig];
+      if(chosen !== undefined){
+        if(orig === q.a){ b.classList.add("correct"); b.querySelector(".mark").textContent = "✓"; }
+        else if(orig === chosen){ b.classList.add("wrong"); b.querySelector(".mark").textContent = "✗"; }
+      }
+      b.onclick = () => choose(orig);
+      box.appendChild(b);
+    });
+    const ex = $("expl");
+    if(chosen !== undefined){
+      const ok = chosen === q.a;
+      ex.className = "expl show " + (ok ? "ok" : "no");
+      ex.innerHTML = "";
+      const v = document.createElement("div"); v.className = "verdict";
+      v.textContent = ok ? "✓ Correct!" : "✗ Wrong. Correct answer: " + q.c[q.a];
+      const t = document.createElement("div"); t.textContent = q.e;
+      const h = document.createElement("div"); h.className = "sub"; h.style.marginTop = "6px";
+      h.textContent = "You can click another choice to change your answer.";
+      ex.append(v,t,h);
+    } else { ex.className = "expl"; ex.innerHTML = ""; }
+    $("prevBtn").disabled = pos === 0;
+    $("nextBtn").textContent = pos === order.length-1 ? "Finish ✔" : "Next →";
+    renderScore(); renderGrid();
+  }
+  function choose(orig){
+    const q = QUESTIONS[order[pos]], k = keyOf(q);
+    if(answers[k] === orig) return;
+    answers[k] = orig;
+    render(); save();
+  }
+  function showResult(){
+    const s = stats();
+    const pct = s.total ? Math.round(s.c / s.total * 100) : 0;
+    $("rPct").textContent = s.c + " / " + s.total;
+    $("rLine").textContent = pct >= 75 ? "Great job! 🎉 (" + pct + "%)" : pct >= 50 ? "Good effort, keep reviewing (" + pct + "%)" : "Keep practicing (" + pct + "%)";
+    $("rDetail").textContent = "Correct: " + s.c + " · Wrong: " + s.w + " · Unanswered: " + (s.total - s.done);
+    $("quizCard").classList.add("hidden");
+    $("resultCard").classList.remove("hidden");
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  $("nextBtn").onclick = () => {
+    if(pos < order.length-1){ pos++; render(); save(); window.scrollTo({top:0,behavior:"smooth"}); }
+    else showResult();
+  };
+  $("prevBtn").onclick = () => { if(pos>0){ pos--; render(); save(); } };
+  $("themeBtn").onclick = () => theme(document.documentElement.getAttribute("data-theme")==="dark" ? "light" : "dark");
+  $("shuffleBtn").onclick = () => {
+    shuffle = !shuffle;
+    $("shuffleBtn").textContent = "🔀 Shuffle: " + (shuffle ? "On" : "Off");
+    build();
+  };
+  function fullReset(){
+    mode = "all"; shuffle = false;
+    try{ localStorage.removeItem(KEY); }catch(e){}
+    [...$("modeSeg").children].forEach(x => x.classList.toggle("on", x.dataset.m==="all"));
+    $("shuffleBtn").textContent = "🔀 Shuffle: Off";
+    build();
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+  $("resetBtn").onclick = fullReset;
+  $("retryBtn").onclick = fullReset;
+  $("reviewBtn").onclick = () => { pos = 0; $("resultCard").classList.add("hidden"); $("quizCard").classList.remove("hidden"); render(); };
+  $("modeSeg").onclick = e => {
+    const b = e.target.closest("button"); if(!b) return;
+    mode = b.dataset.m; build();
+    [...$("modeSeg").children].forEach(x => x.classList.toggle("on", x===b));
+  };
+  document.addEventListener("keydown", e => {
+    if(e.key==="ArrowRight") $("nextBtn").click();
+    else if(e.key==="ArrowLeft") $("prevBtn").click();
+    else if(/^[1-4a-dA-D]$/.test(e.key)){
+      const i = isNaN(e.key) ? e.key.toUpperCase().charCodeAt(0)-65 : +e.key-1;
+      const b = $("opts").children[i]; if(b && !b.disabled) b.click();
+    }
+  });
+
+  initTheme();
+  if(load()){
+    [...$("modeSeg").children].forEach(x => x.classList.toggle("on", x.dataset.m===mode));
+    $("shuffleBtn").textContent = "🔀 Shuffle: " + (shuffle ? "On" : "Off");
+    if(pos >= order.length) pos = 0;
+    render();
+  } else build();
+})();
+</script>
+</body>
+</html>
